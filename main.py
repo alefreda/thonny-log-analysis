@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-import dateutil.parser
+
 import os
 import shutil
 
@@ -65,25 +65,50 @@ sequence" "<<Paste>>" "text_widget_class" "CodeViewText" -> paste
 
 
 #Iterate through folders, then subfolders and file
-def list_files(dir):                                                                                                  
-                                                                                                            
-    subdirs = [x[0] for x in os.walk(dir)]                                                                    
+#list not dataframe 
+def dataFrame(dir):                                                                                                  
+
+    #df_thonny_logs = pd.DataFrame()
+
+    subdirs = [x[0] for x in os.walk(dir)] 
+
+    thonny_logs_list = []                                                             
     for subdir in subdirs:
                                                                                                     
         files = os.walk(subdir).__next__()[2]
         sortedFiles = sorted(files)
+        #print(df_thonny_logs)
         
-        for file in files:
+        for file in sortedFiles:
             f = open(os.path.join(subdir, file))
             logs = json.load(f)
-            df = pd.DataFrame(logs)
-            print(df)
-                                                                                 
+            
+            #df = pd.DataFrame(logs)
+            
+            #extract integers from the string of the substring
+            stringSubdir = subdir
+            student_ID = 0
+
+            res = ''.join(filter(lambda i: i.isdigit(), stringSubdir)) 
+            student_ID = res
+            
+            for item in logs:
+                item.update( {"Student ID":student_ID})
+            
+            thonny_logs_list.extend(logs)
+
+            #df['Student ID'] = student_ID
+            #print(df)
+            #df_thonny_logs = df_thonny_logs.append(df, sort=False, ignore_index=True)
+
+    df_thonny_logs = pd.DataFrame(thonny_logs_list)
+    df_thonny_logs.to_csv('dataset_thonny_logs.csv')    
+    return df_thonny_logs                                                                         
                                                                                
 
 
 def main():
-    list_files('logs/')
+    dataFrame('logs/')
 
 
 
