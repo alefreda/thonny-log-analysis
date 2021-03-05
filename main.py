@@ -1,9 +1,23 @@
 import dateutil.parser
 import json
-import pandas as pd
+
 
 import os
 import shutil
+
+import numpy as np
+import pandas as pd
+
+# Visualization
+import missingno as msno
+import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.express as px
+
+
+import seaborn as sns # For mathematical calculations
+import matplotlib.pyplot as plt  # For plotting graphs
+from datetime import datetime    # To access datetime
 
 '''
 logs[0]["time"]   -> apertura
@@ -65,6 +79,17 @@ sequence" "<<Paste>>" "text_widget_class" "CodeViewText" -> paste
 #     print("numero di run: ", len(run))
 
 
+#fuction to check element in json
+def in_json(element, key, value, exact=True):
+    if key not in element:
+        return False
+    if exact:
+        return element[key] == value
+    else:
+        return element[key].find(value) != -1
+
+
+
 #Iterate through folders, then subfolders and file
 #list not dataframe 
 def dataFrame(dir):                                                                                                  
@@ -97,14 +122,12 @@ def dataFrame(dir):
                 #add student id
                 item.update( {"student_ID":student_ID})
 
-                #replace error messages
-                if "text" in item:
-                    #check se la stringa error è nel valore corrispondente
-                    if "Error" in item["text"]:
-                        print("at time: ", dateutil.parser.parse(item["time"]))
-                    else:
-                        pass
+                if in_json(item, "sequence", "TextInsert") and in_json(item, "text", "Error", False):
+                    txt = item['text']
+                    error_text_type = txt.split(":", 1)[0]
+                    item.update( {"error_type": error_text_type})
 
+                
 
 
 
@@ -121,9 +144,9 @@ def dataFrame(dir):
 
 
 def main():
-    dataFrame('logs/')
-    #df = pd.read_csv('dataset_thonny_logs.csv') 
-
+    #dataFrame('logs/')
+    df = pd.read_csv('dataset_thonny_logs.csv') 
+ 
     #errors
     #df2 = df[df['text'].str.contains("Error", na=False)]
     #df2.to_csv('errors.csv')  
