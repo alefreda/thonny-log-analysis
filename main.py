@@ -93,7 +93,7 @@ def dataFrame(dir):
             student_ID = res
             
             for item in logs:
-                item.update( {"Student ID":student_ID})
+                item.update( {"student_ID":student_ID})
             
             thonny_logs_list.extend(logs)
 
@@ -102,16 +102,20 @@ def dataFrame(dir):
             #df_thonny_logs = df_thonny_logs.append(df, sort=False, ignore_index=True)
 
     df_thonny_logs = pd.DataFrame(thonny_logs_list)
-    df_thonny_logs.to_csv('dataset_thonny_logs.csv')    
+    df_thonny_logs.to_csv('dataset_thonny_logs.csv', index=False)    
     return df_thonny_logs                                                                         
                                                                                
 
 
 def main():
     dataFrame('logs/')
+    #df = pd.read_csv('dataset_thonny_logs.csv') 
 
+    #errors
+    #df2 = df[df['text'].str.contains("Error", na=False)]
+    #df2.to_csv('errors.csv')  
 
-
+    #print(df['time'].dtypes) 
                 
 
 
