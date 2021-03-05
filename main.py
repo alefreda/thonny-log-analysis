@@ -1,3 +1,4 @@
+import dateutil.parser
 import json
 import pandas as pd
 
@@ -93,8 +94,20 @@ def dataFrame(dir):
             student_ID = res
             
             for item in logs:
+                #add student id
                 item.update( {"student_ID":student_ID})
-            
+
+                #replace error messages
+                if "text" in item:
+                    #check se la stringa error è nel valore corrispondente
+                    if "Error" in item["text"]:
+                        print("at time: ", dateutil.parser.parse(item["time"]))
+                    else:
+                        pass
+
+
+
+
             thonny_logs_list.extend(logs)
 
             #df['Student ID'] = student_ID
