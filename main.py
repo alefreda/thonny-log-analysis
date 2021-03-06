@@ -1,3 +1,4 @@
+from os.path import isfile
 import dateutil.parser
 import json
 
@@ -125,7 +126,16 @@ def dataFrame(dir):
                 if in_json(item, "sequence", "TextInsert") and in_json(item, "text", "Error", False):
                     txt = item['text']
                     error_text_type = txt.split(":", 1)[0]
-                    item.update( {"error_type": error_text_type})
+                    #check number of characters
+                    if len(error_text_type) < 50:
+                        #remove \n
+                        if '\n' in error_text_type:
+                            clean_error_text_type = error_text_type.replace('\n', '') 
+                            item.update( {"error_type": clean_error_text_type})
+                        else:
+                            item.update( {"error_type": error_text_type})
+                    
+
 
                 
 
@@ -144,8 +154,8 @@ def dataFrame(dir):
 
 
 def main():
-    #dataFrame('logs/')
-    df = pd.read_csv('dataset_thonny_logs.csv') 
+    dataFrame('logs/')
+    #df = pd.read_csv('dataset_thonny_logs.csv') 
  
     #errors
     #df2 = df[df['text'].str.contains("Error", na=False)]
