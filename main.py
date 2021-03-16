@@ -2,6 +2,7 @@ from os.path import isfile
 import dateutil.parser
 import json
 
+import random
 
 import os
 import shutil
@@ -96,7 +97,7 @@ def in_json(element, key, value, exact=True):
 def dataFrame(dir):                                                                                                  
 
     #df_thonny_logs = pd.DataFrame()
-    lab_days = ['2020-03-23', '2020-03-26', '2020-03-30', '2020-04-06', '2020-04-16', '2020-04-27', '2020-04-30', '2020-05-07', '2020-05-11', '2020-05-14']
+    lab_days = ['2020-03-19', '2020-03-23', '2020-03-26', '2020-03-30', '2020-04-06', '2020-04-16', '2020-04-27', '2020-04-30', '2020-05-07', '2020-05-11', '2020-05-14']
     subdirs = [x[0] for x in os.walk(dir)] 
 
     thonny_logs_list = []                                                             
@@ -118,14 +119,14 @@ def dataFrame(dir):
 
             res = ''.join(filter(lambda i: i.isdigit(), stringSubdir)) 
             student_ID = res
-            
+            target = random.randint(0,1)
             for item in logs:
 
                 #select lab days
                 if any(ele in item['time'] for ele in lab_days):
                     #add student id
                     item.update( {"student_ID":student_ID})
-
+                    item.update({"target":target})
                     if in_json(item, "sequence", "TextInsert") and in_json(item, "text", "Error", False):
                         txt = item['text']
                         error_text_type = txt.split(":", 1)[0]
@@ -137,7 +138,8 @@ def dataFrame(dir):
                                 item.update( {"error_type": clean_error_text_type})
                             else:
                                 item.update( {"error_type": error_text_type})
-                    
+                else:
+                    logs.remove(item)
                 
 
             thonny_logs_list.extend(logs)
@@ -152,7 +154,12 @@ def dataFrame(dir):
                                                                                
 
 
+
+        
+
 def main():
+
+
     dataFrame('logs/')
     #df = pd.read_csv('dataset_thonny_logs.csv') 
  
