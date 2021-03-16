@@ -96,7 +96,7 @@ def in_json(element, key, value, exact=True):
 def dataFrame(dir):                                                                                                  
 
     #df_thonny_logs = pd.DataFrame()
-
+    lab_days = ['2020-03-23', '2020-03-26', '2020-03-30', '2020-04-06', '2020-04-16', '2020-04-27', '2020-04-30', '2020-05-07', '2020-05-11', '2020-05-14']
     subdirs = [x[0] for x in os.walk(dir)] 
 
     thonny_logs_list = []                                                             
@@ -120,26 +120,25 @@ def dataFrame(dir):
             student_ID = res
             
             for item in logs:
-                #add student id
-                item.update( {"student_ID":student_ID})
 
-                if in_json(item, "sequence", "TextInsert") and in_json(item, "text", "Error", False):
-                    txt = item['text']
-                    error_text_type = txt.split(":", 1)[0]
-                    #check number of characters
-                    if len(error_text_type) < 50:
-                        #remove \n
-                        if '\n' in error_text_type:
-                            clean_error_text_type = error_text_type.replace('\n', '') 
-                            item.update( {"error_type": clean_error_text_type})
-                        else:
-                            item.update( {"error_type": error_text_type})
+                #select lab days
+                if any(ele in item['time'] for ele in lab_days):
+                    #add student id
+                    item.update( {"student_ID":student_ID})
+
+                    if in_json(item, "sequence", "TextInsert") and in_json(item, "text", "Error", False):
+                        txt = item['text']
+                        error_text_type = txt.split(":", 1)[0]
+                        #check number of characters
+                        if len(error_text_type) < 50:
+                            #remove \n
+                            if '\n' in error_text_type:
+                                clean_error_text_type = error_text_type.replace('\n', '') 
+                                item.update( {"error_type": clean_error_text_type})
+                            else:
+                                item.update( {"error_type": error_text_type})
                     
-
-
                 
-
-
 
             thonny_logs_list.extend(logs)
 
