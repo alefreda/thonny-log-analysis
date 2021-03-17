@@ -3,7 +3,7 @@ import dateutil.parser
 import json
 
 import random
-
+import csv
 import os
 import shutil
 
@@ -94,7 +94,7 @@ def in_json(element, key, value, exact=True):
 
 #Iterate through folders, then subfolders and file
 #list not dataframe 
-def dataFrame(dir):                                                                                                  
+def dataFrame(dir, scores):                                                                                                  
 
     #df_thonny_logs = pd.DataFrame()
     lab_days = ['2020-03-19', '2020-03-23', '2020-03-26', '2020-03-30', '2020-04-06', '2020-04-16', '2020-04-27', '2020-04-30', '2020-05-07', '2020-05-11', '2020-05-14']
@@ -119,14 +119,22 @@ def dataFrame(dir):
 
             res = ''.join(filter(lambda i: i.isdigit(), stringSubdir)) 
             student_ID = res
-            target = random.randint(0,1)
+
+
+            score = 'fail'
+            for item2 in scores:
+                if (student_ID == item2['student_ID']):
+                    score = item2['score']
+           
+
             for item in logs:
 
                 #select lab days
                 if any(ele in item['time'] for ele in lab_days):
+
                     #add student id
                     item.update( {"student_ID":student_ID})
-                    item.update({"target":target})
+                    item.update({"score":score})
                     if in_json(item, "sequence", "TextInsert") and in_json(item, "text", "Error", False):
                         txt = item['text']
                         error_text_type = txt.split(":", 1)[0]
@@ -153,14 +161,39 @@ def dataFrame(dir):
     return df_thonny_logs                                                                         
                                                                                
 
+def scores():
+    scores = []
+    
+    with open('id-log_voto.csv') as f:
 
+        csv_reader = csv.reader(f, delimiter=';')
+        line_count = 0
+        
+        for row in csv_reader:
+            info = {}
+            if line_count == 0:
+                print(f'Column names are {", ".join(row)}')
+                line_count += 1
+            else:
+                
+                info['student_ID'] = row[0]
+                if row[1] == '-':
+                    info['score'] = 'fail'
+                elif int(row[1]) >= 18 and int(row[1]) <= 26:
+                    info['score'] = 'pass'
+                elif int(row[1]) > 26:
+                    info['score'] = 'excellent'
+
+            scores.append(info)    
+        del scores[0]
+        return scores
 
         
 
 def main():
 
-
-    dataFrame('logs/')
+     
+    dataFrame('logs/', scores())
     #df = pd.read_csv('dataset_thonny_logs.csv') 
  
     #errors
