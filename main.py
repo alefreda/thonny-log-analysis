@@ -90,8 +90,6 @@ def in_json(element, key, value, exact=True):
     else:
         return element[key].find(value) != -1
 
-
-
 #Iterate through folders, then subfolders and file
 #list not dataframe 
 def dataFrame(dir, scores):                                                                                                  
@@ -125,12 +123,13 @@ def dataFrame(dir, scores):
             for item2 in scores:
                 if (student_ID == item2['student_ID']):
                     score = item2['score']
-           
+            
+            list_logs = []
 
             for item in logs:
 
                 #select lab days
-                if any(ele in item['time'] for ele in lab_days):
+                if any(ele[0:10] in item['time'] for ele in lab_days):
 
                     #add student id
                     item.update( {"student_ID":student_ID})
@@ -146,11 +145,11 @@ def dataFrame(dir, scores):
                                 item.update( {"error_type": clean_error_text_type})
                             else:
                                 item.update( {"error_type": error_text_type})
+                    list_logs.append(item)
                 else:
                     logs.remove(item)
-                
 
-            thonny_logs_list.extend(logs)
+            thonny_logs_list.extend(list_logs)
 
             #df['Student ID'] = student_ID
             #print(df)
@@ -175,7 +174,6 @@ def scores():
                 print(f'Column names are {", ".join(row)}')
                 line_count += 1
             else:
-                
                 info['student_ID'] = row[0]
                 if row[1] == '-':
                     info['score'] = 'fail'
@@ -186,24 +184,16 @@ def scores():
 
             scores.append(info)    
         del scores[0]
-        return scores
+        return scores      
 
-        
-
-def main():
-
-     
+def main(): 
     dataFrame('logs/', scores())
     #df = pd.read_csv('dataset_thonny_logs.csv') 
- 
     #errors
     #df2 = df[df['text'].str.contains("Error", na=False)]
     #df2.to_csv('errors.csv')  
-
     #print(df['time'].dtypes) 
                 
-
-
 if __name__ == "__main__":
     main()
 
