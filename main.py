@@ -158,7 +158,7 @@ def dataFrame(dir, scores):
     df_thonny_logs = pd.DataFrame(thonny_logs_list)
     df_thonny_logs.to_csv('dataset_thonny_logs.csv', index=False)    
     return df_thonny_logs                                                                         
-                                                                               
+                                                                   
 
 def scores():
     scores = []
