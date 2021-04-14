@@ -176,9 +176,9 @@ def scores():
             else:
                 info['student_ID'] = row[0]
                 if row[1] == '-':
-                    info['score'] = 'fail'
+                    info['score'] = 'failed'
                 elif int(row[1]) >= 18 and int(row[1]) <= 26:
-                    info['score'] = 'pass'
+                    info['score'] = 'passed'
                 elif int(row[1]) > 26:
                     info['score'] = 'excellent'
 
